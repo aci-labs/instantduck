@@ -1,0 +1,4 @@
+fastapi==0.111.0
+redis==5.0.4
+duckdb==0.10.2
+uvicorn==0.29.0

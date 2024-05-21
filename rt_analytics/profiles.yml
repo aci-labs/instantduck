@@ -1,0 +1,12 @@
+rt_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: /data/clean.db
+      extensions:
+        - json
+      attach:
+        - path: /data/duckdb.db
+          alias: raw
+          read_only: true

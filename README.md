@@ -15,6 +15,10 @@ instantduck/
 │   └── requirements.txt
 ├── config/
 │   ├── supervisord.conf
+├── demo/
+│   ├── demo.py
+|   ├── vehicle_telemetry.json
+├── rt_analytics/
 ├── Dockerfile
 ├── .gitignore
 └── README.md

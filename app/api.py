@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 import redis
 import json
 import duckdb
@@ -11,11 +11,14 @@ redis_conn = redis.Redis(host="localhost", port=6379)
 # duckdb_conn.execute("LOAD json;")
 
 @app.post("/ingest")
-async def ingest_data(request: Request):
+async def ingest_data(request: Request, tags: str = Query(None, description="Comma-separated list of dbt tags")):
     data = await request.json()
+    if tags:
+        data['tags'] = tags
     # Add data to Redis Stream
     redis_conn.xadd('ingeststream', {'data': json.dumps(data)})
     return {"message": "Data ingested successfully"}
+
 
 # @app.get("/query")
 # async def query_data(query: str = "SELECT * FROM db1.ingest.messages"):

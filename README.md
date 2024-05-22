@@ -2,7 +2,9 @@
 
 ## Overview
 
-This project is a FastAPI-based application that ingests data into a Redis stream and processes it with a consumer that stores the data in a DuckDB database. The project uses Docker to containerize the application, making it easy to set up and run.
+This project is a FastAPI-based application that ingests data into a Redis stream and processes it with a consumer that stores the data in a DuckDB database.
+That data is then transformed using a dbt project.
+The project uses Docker to containerize the application, making it easy to set up and run.
 
 ## Project Structure
 
@@ -31,7 +33,10 @@ instantduck/
   - `requirements.txt`: Lists the Python dependencies required by the application.
 - **config/**: Contains configuration files.
   - `supervisord.conf`: Configuration for Supervisor to manage your processes.
-- **data/**: Directory for storing the DuckDB database file.
+- **demo/**: Directory for demo scripts and data.
+  - `demo.py`: Demonstrates how to ingest data into the API.
+  - `vehicle_telemetry.json`: Sample data for the demo.
+- **rt_analytics/**: Directory for the dbt project.
 - **Dockerfile**: Defines the Docker image, including all dependencies and setup instructions.
 - **.gitignore**: Specifies intentionally untracked files to ignore.
 - **README.md**: Provides an overview of the project, instructions for setup, usage, and deployment.
@@ -69,7 +74,8 @@ instantduck/
 
 - **Ingest Data**:
   ```sh
-  curl -X POST -H "Content-Type: application/json" -d '{"name": "John Doe", "age": 34}' http://localhost:5000/ingest
+  cd demo
+  python demo.py
   ```
 
 ### Directory Details
@@ -80,6 +86,8 @@ instantduck/
   uvicorn
   redis
   duckdb
+  dbt-duckdb
+  fsspec
   ```
 
 - **config/supervisord.conf**: Supervisor configuration to manage the processes:
@@ -104,43 +112,7 @@ instantduck/
   ```
 
 - **Dockerfile**: Defines the Docker image:
-  ```Dockerfile
-  # Use the official Python image
-  FROM python:3.9-slim
-
-  # Set environment variables
-  ENV PYTHONUNBUFFERED=1 \
-      REDIS_HOST=localhost \
-      REDIS_PORT=6379 \
-      DUCKDB_DB_PATH=/data/duckdb.db
-
-  # Install Redis, supervisor, and necessary packages
-  RUN apt-get update && apt-get install -y \
-      redis-server \
-      supervisor \
-      && rm -rf /var/lib/apt/lists/*
-
-  # Install Python dependencies
-  COPY app/requirements.txt .
-  RUN pip install --no-cache-dir -r requirements.txt
-
-  # Create a directory for the DuckDB database
-  RUN mkdir -p /data
-
-  # Set up working directory
-  WORKDIR /app
-
-  # Copy configuration files and Python scripts
-  COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-  COPY app/ .
-
-  # Expose the port for the API
-  EXPOSE 5000
-
-  # Start supervisor
-  CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-  ```
-
+  
 - **.gitignore**: Specifies files and directories to ignore:
   ```
   

@@ -70,9 +70,9 @@ instantduck/
    docker logs c-instantduck
    ```
 
-### API Endpoints
+### Testing the Application
 
-- **Ingest Data**:
+- **Ingest Data and run dbt models**:
   ```sh
   cd demo
   python demo.py
